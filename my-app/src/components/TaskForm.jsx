@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { useDispatch } from 'react-redux'
+import { addTask } from '../store/tasksSlice'
 
-function TaskForm({ onAddTask }) {
+function TaskForm() {
   const [taskText, setTaskText] = useState('')
+  const dispatch = useDispatch()
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -12,7 +15,7 @@ function TaskForm({ onAddTask }) {
       return
     }
 
-    onAddTask(trimmedText)
+    dispatch(addTask(trimmedText))
     setTaskText('')
   }
 

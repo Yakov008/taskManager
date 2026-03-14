@@ -1,59 +1,20 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useSelector } from 'react-redux'
 import TaskForm from './components/TaskForm'
 import SearchBar from './components/SearchBar'
 import Stats from './components/Stats'
 import TaskList from './components/TaskList'
-
-const STORAGE_KEY = 'task-manager-tasks'
+import {
+  selectActiveTasks,
+  selectAllTasks,
+  selectCompletedTasks,
+} from './store/tasksSlice'
 
 function App() {
-  const [tasks, setTasks] = useState(() => {
-    const savedTasks = localStorage.getItem(STORAGE_KEY)
-
-    if (savedTasks) {
-      return JSON.parse(savedTasks)
-    }
-
-    return [
-      {
-        id: crypto.randomUUID(),
-        text: 'Сходить в спортзал',
-        completed: true,
-        createdAt: new Date().toISOString(),
-      },
-      {
-        id: crypto.randomUUID(),
-        text: 'Сходить в ресторан',
-        completed: false,
-        createdAt: new Date().toISOString(),
-      },
-    ]
-  })
-
+  const tasks = useSelector(selectAllTasks)
+  const activeTasks = useSelector(selectActiveTasks)
+  const completedTasks = useSelector(selectCompletedTasks)
   const [searchValue, setSearchValue] = useState('')
-
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks))
-  }, [tasks])
-
-  const addTask = (taskText) => {
-    const newTask = {
-      id: crypto.randomUUID(),
-      text: taskText,
-      completed: false,
-      createdAt: new Date().toISOString(),
-    }
-
-    setTasks((prevTasks) => [newTask, ...prevTasks])
-  }
-
-  const toggleTaskStatus = (taskId) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    )
-  }
 
   const filteredTasks = useMemo(() => {
     return tasks.filter((task) =>
@@ -61,17 +22,11 @@ function App() {
     )
   }, [tasks, searchValue])
 
-  const stats = useMemo(() => {
-    const total = tasks.length
-    const completed = tasks.filter((task) => task.completed).length
-    const active = total - completed
-
-    return {
-      total,
-      active,
-      completed,
-    }
-  }, [tasks])
+  const stats = {
+    total: tasks.length,
+    active: activeTasks.length,
+    completed: completedTasks.length,
+  }
 
   return (
     <div className="app">
@@ -82,14 +37,14 @@ function App() {
 
         <Stats stats={stats} />
 
-        <TaskForm onAddTask={addTask} />
+        <TaskForm />
 
         <SearchBar
           searchValue={searchValue}
           onSearchChange={setSearchValue}
         />
 
-        <TaskList tasks={filteredTasks} onToggleTaskStatus={toggleTaskStatus} />
+        <TaskList tasks={filteredTasks} />
       </div>
     </div>
   )

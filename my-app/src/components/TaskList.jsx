@@ -1,6 +1,6 @@
 import TaskItem from './TaskItem'
 
-function TaskList({ tasks, onToggleTaskStatus }) {
+function TaskList({ tasks }) {
   return (
     <section className="card">
       <h2>Список задач</h2>
@@ -10,11 +10,7 @@ function TaskList({ tasks, onToggleTaskStatus }) {
       ) : (
         <div className="task-list">
           {tasks.map((task) => (
-            <TaskItem
-              key={task.id}
-              task={task}
-              onToggleTaskStatus={onToggleTaskStatus}
-            />
+            <TaskItem key={task.id} task={task} />
           ))}
         </div>
       )}

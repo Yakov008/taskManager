@@ -173,3 +173,10 @@ button {
     width: 100%;
   }
 }
+
+
+.task-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
